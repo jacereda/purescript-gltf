@@ -1,0 +1,21 @@
+{
+  "name": "purescript-gltf",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "dependencies": {
+    "purescript-prelude": "^3.1.0",
+    "purescript-foreign-generic": "jacereda/purescript-foreign-generic#map"
+  },
+  "devDependencies": {
+    "purescript-console": "^3.0.0",
+    "purescript-psci-support": "^3.0.0",
+    "purescript-affjax": "^4.0.0",
+    "purescript-arraybuffer": "^5.0.0",
+    "purescript-debug": "^3.0.0",
+    "purescript-assert": "^3.0.0"
+  }
+}
