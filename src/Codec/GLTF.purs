@@ -16,8 +16,8 @@ import Codec.GLTF.Sampler (Sampler)
 import Codec.GLTF.Scene (Scene)
 import Codec.GLTF.Skin (Skin)
 import Codec.GLTF.Texture (Texture)
+import Codec.GLTF.Dec (dec)
 import Data.Foreign.Class (class Decode)
-import Data.Foreign.Generic (defaultOptions, genericDecode)
 import Data.Foreign.NullOrUndefined (NullOrUndefined)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
@@ -43,6 +43,4 @@ newtype GLTF =
 
 derive instance genericGLTF :: Generic GLTF _
 instance showGLTF :: Show GLTF where show = genericShow
-instance decodeGLTF :: Decode GLTF where
-  decode = genericDecode opts
-    where opts = defaultOptions { unwrapSingleConstructors = true }
+instance decodeGLTF :: Decode GLTF where decode = dec
