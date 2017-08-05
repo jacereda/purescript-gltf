@@ -1,10 +1,8 @@
 module Codec.GLTF.Dec where
 
 import Data.Foreign (Foreign, F)
-import Data.Foreign.Generic (defaultOptions, genericDecode)
-import Data.Foreign.Generic.Class (class GenericDecode)
-import Data.Generic.Rep (class Generic)
+import Simple.JSON (class ReadForeign, read)
 
 
-dec :: forall a b. Generic b a => GenericDecode a => Foreign -> F b
-dec = genericDecode (defaultOptions { unwrapSingleConstructors = true })
+dec :: forall a. ReadForeign a => Foreign -> F a
+dec = read

@@ -2,7 +2,7 @@ module Test.Main where
 
 import Prelude
 
-import Codec.GLTF (GLTF)
+import Codec.GLTF (GLTF, decodeGLTF)
 import Control.Monad.Aff (Aff, attempt, launchAff)
 import Control.Monad.Aff.Console (CONSOLE, log)
 import Control.Monad.Eff (Eff)
@@ -59,9 +59,10 @@ main = void $ launchAff do
           response <- attempt $ get $ base <> url
           case response of
             Left err -> report url err
-            Right res -> case runExcept $ (decode res.response :: F GLTF) of
+            Right res -> case runExcept $ (decodeGLTF res.response :: F GLTF) of
               Left err -> report url err
               Right r -> log $ "OK: " <> url
         report :: forall eff a. Show a => String -> a -> Aff (console :: CONSOLE | eff) Unit
         report m e = log $ "Error : " <> m <> " " <> show e
         base = "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/"
+        -- base = "http://localhost:1337/glTF-Sample-Models-master/2.0/"

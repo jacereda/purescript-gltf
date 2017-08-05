@@ -1,7 +1,5 @@
 module Codec.GLTF where
 
-import Prelude
-
 import Codec.GLTF.Accessor (Accessor)
 import Codec.GLTF.Animation (Animation)
 import Codec.GLTF.Asset (Asset)
@@ -16,14 +14,12 @@ import Codec.GLTF.Sampler (Sampler)
 import Codec.GLTF.Scene (Scene)
 import Codec.GLTF.Skin (Skin)
 import Codec.GLTF.Texture (Texture)
-import Codec.GLTF.Dec (dec)
-import Data.Foreign.Class (class Decode)
+import Data.Foreign (F)
 import Data.Foreign.NullOrUndefined (NullOrUndefined)
-import Data.Generic.Rep (class Generic)
-import Data.Generic.Rep.Show (genericShow)
+import Simple.JSON (readJSON)
 
-newtype GLTF =
-  GLTF
+type GLTF
+  = 
   { accessors :: NullOrUndefined (Array Accessor)
   , animations :: NullOrUndefined (Array Animation)
   , asset :: NullOrUndefined Asset
@@ -41,6 +37,5 @@ newtype GLTF =
   , textures :: NullOrUndefined (Array Texture)
   }
 
-derive instance genericGLTF :: Generic GLTF _
-instance showGLTF :: Show GLTF where show = genericShow
-instance decodeGLTF :: Decode GLTF where decode = dec
+decodeGLTF :: String -> F GLTF
+decodeGLTF = readJSON

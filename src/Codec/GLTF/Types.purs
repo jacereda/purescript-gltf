@@ -2,16 +2,12 @@ module Codec.GLTF.Types where
 
 import Prelude
 
-import Codec.GLTF.Dec (dec)
 import Control.Monad.Except (runExcept)
 import Data.Either (Either(..))
 import Data.Foreign (ForeignError(..), fail, readInt, readString)
-import Data.Foreign.Class (class Decode, class DecodeKey)
 import Data.Generic.Rep (class Generic)
-import Data.Generic.Rep.Eq (genericEq)
-import Data.Generic.Rep.Ord (genericCompare)
 import Data.Generic.Rep.Show (genericShow)
-import Data.Map (Map)
+import Simple.JSON (class ReadForeign)
 
 data ComponentType
   = Byte
@@ -23,8 +19,8 @@ data ComponentType
 
 derive instance genericComponentType :: Generic ComponentType _
 instance showComponentType :: Show ComponentType where show = genericShow
-instance decodeComponentType :: Decode ComponentType where
-  decode v = case runExcept $ readInt v of
+instance readForeignComponentType :: ReadForeign ComponentType where
+  readImpl v = case runExcept $ readInt v of
     Right n -> case n of
       5120 -> pure Byte
       5121 -> pure UnsignedByte
@@ -43,8 +39,8 @@ data CameraType
 
 derive instance genericCameraType :: Generic CameraType _
 instance showCameraType :: Show CameraType where show = genericShow
-instance decodeCameraType :: Decode CameraType where
-  decode v = case runExcept $ readString v of
+instance readForeignCameraType :: ReadForeign CameraType where
+  readImpl v = case runExcept $ readString v of
     Right "orthographic" -> pure CamOrthographic
     Right "perspective" -> pure CamPerspective
     Right x -> fail $ ForeignError $ "Unrecognized camera type:" <> x
@@ -62,8 +58,8 @@ data AccessorType
 
 derive instance genericAccessorType :: Generic AccessorType _
 instance showAccessorType :: Show AccessorType where show = genericShow
-instance decodeAccessorType :: Decode AccessorType where
-  decode v = case runExcept $ readString v of
+instance readForeignAccessorType :: ReadForeign AccessorType where
+  readImpl v = case runExcept $ readString v of
     Right "SCALAR" -> pure Scalar
     Right "VEC2" -> pure Vec2
     Right "VEC3" -> pure Vec3
@@ -82,8 +78,8 @@ data Interpolation
 
 derive instance genericInterpolation :: Generic Interpolation _
 instance showInterpolation :: Show Interpolation where show = genericShow
-instance decodeInterpolation :: Decode Interpolation where
-  decode v = case runExcept $ readString v of
+instance readForeignInterpolation :: ReadForeign Interpolation where
+  readImpl v = case runExcept $ readString v of
     Right "LINEAR" -> pure Linear
     Right "STEP" -> pure Step
     Right "CATMULLROMSPLINE" -> pure CatmullRomSpline
@@ -100,8 +96,8 @@ data TargetPath
 
 derive instance genericTargetPath :: Generic TargetPath _
 instance showTargetPath :: Show TargetPath where show = genericShow
-instance decodeTargetPath :: Decode TargetPath where
-  decode v = case runExcept $ readString v of
+instance readForeignTargetPath :: ReadForeign TargetPath where
+  readImpl v = case runExcept $ readString v of
     Right "translation" -> pure Translation
     Right "rotation" -> pure Rotation
     Right "scale" -> pure Scale
@@ -116,8 +112,8 @@ data AlphaMode
 
 derive instance genericAlphaMode :: Generic AlphaMode _
 instance showAlphaMode :: Show AlphaMode where show = genericShow
-instance decodeAlphaMode :: Decode AlphaMode where
-  decode v = case runExcept $ readString v of
+instance readForeignAlphaMode :: ReadForeign AlphaMode where
+  readImpl v = case runExcept $ readString v of
     Right "OPAQUE" -> pure Opaque
     Right "MASK" -> pure Mask
     Right "BLEND" -> pure Blend
@@ -135,8 +131,8 @@ data PrimitiveMode
 
 derive instance genericPrimitiveMode :: Generic PrimitiveMode _
 instance showPrimitiveMode :: Show PrimitiveMode where show = genericShow
-instance decodePrimitiveMode :: Decode PrimitiveMode where
-  decode v = case runExcept $ readInt v of
+instance readForeignPrimitiveMode :: ReadForeign PrimitiveMode where
+  readImpl v = case runExcept $ readInt v of
     Right 0 -> pure Points
     Right 1 -> pure Lines
     Right 2 -> pure LineLoop
@@ -154,8 +150,8 @@ data TargetType
 
 derive instance genericTargetType :: Generic TargetType _
 instance showTargetType :: Show TargetType where show = genericShow
-instance decodeTargetType :: Decode TargetType where
-  decode v = case runExcept $ readInt v of
+instance readForeignTargetType :: ReadForeign TargetType where
+  readImpl v = case runExcept $ readInt v of
     Right 34962 -> pure ArrayBuffer
     Right 34963 -> pure ElementArrayBuffer
     Right x -> fail $ ForeignError $ "Unrecognized target type:" <> show x
@@ -168,8 +164,8 @@ data MimeType
 
 derive instance genericMimeType :: Generic MimeType _
 instance showMimeType :: Show MimeType where show = genericShow
-instance decodeMimeType :: Decode MimeType where
-  decode v = case runExcept $ readString v of
+instance readForeignMimeType :: ReadForeign MimeType where
+  readImpl v = case runExcept $ readString v of
     Right "image/jpeg" -> pure ImageJPEG
     Right "image/png" -> pure ImagePNG
     Right x -> fail $ ForeignError $ "Unrecognized mime type:" <> show x
@@ -182,8 +178,8 @@ data MagFilter
 
 derive instance genericMagFilter :: Generic MagFilter _
 instance showMagFilter :: Show MagFilter where show = genericShow
-instance decodeMagFilter :: Decode MagFilter where
-  decode v = case runExcept $ readInt v of
+instance readForeignMagFilter :: ReadForeign MagFilter where
+  readImpl v = case runExcept $ readInt v of
     Right 9728 -> pure MagNearest
     Right 9729 -> pure MagLinear
     Right x -> fail $ ForeignError $ "Unrecognized mag filter:" <> show x
@@ -199,8 +195,8 @@ data MinFilter
 
 derive instance genericMinFilter :: Generic MinFilter _
 instance showMinFilter :: Show MinFilter where show = genericShow
-instance decodeMinFilter :: Decode MinFilter where
-  decode v = case runExcept $ readInt v of
+instance readForeignMinFilter :: ReadForeign MinFilter where
+  readImpl v = case runExcept $ readInt v of
     Right 9728 -> pure MinNearest
     Right 9729 -> pure MinLinear
     Right 9984 -> pure NearestMipmapNearest
@@ -217,44 +213,11 @@ data WrapMode
 
 derive instance genericWrapMode :: Generic WrapMode _
 instance showWrapMode :: Show WrapMode where show = genericShow
-instance decodeWrapMode :: Decode WrapMode where
-  decode v = case runExcept $ readInt v of
+instance readForeignWrapMode :: ReadForeign WrapMode where
+  readImpl v = case runExcept $ readInt v of
     Right 33071 -> pure ClampToEdge
     Right 33648 -> pure MirroredRepeat
     Right 10497 -> pure Repeat
     Right x -> fail $ ForeignError $ "Unrecognized wrap mode:" <> show x
     Left e -> fail $ ForeignError $ "Unrecognized wrap mode:" <> show e
     
-
-data Property
-  = Position
-  | Normal
-  | Tangent
-  | TexCoord0
-  | TexCoord1
-  | Color0
-  | Joints0
-  | Weights0
-
-derive instance genericProperty :: Generic Property _
-instance showProperty :: Show Property where show = genericShow
-instance ordProperty :: Ord Property where compare = genericCompare
-instance eqProperty :: Eq Property where eq = genericEq
-instance decodeKeyProperty :: DecodeKey Property where
-  decodeKey v = case v of
-    "POSITION" -> pure Position
-    "NORMAL" -> pure Normal
-    "TANGENT" -> pure Tangent
-    "TEXCOORD_0" -> pure TexCoord0
-    "TEXCOORD_1" -> pure TexCoord1
-    "COLOR_0" -> pure Color0
-    "JOINTS_0" -> pure Joints0
-    "WEIGHTS_0" -> pure Weights0
-    x -> fail $ ForeignError $ "Unrecognized property:" <> x
-
-
-newtype Attributes = Attributes (Map Property Int)
-
-derive instance genericAttributes :: Generic Attributes _
-instance showAttributes :: Show Attributes where show = genericShow
-instance decodeAttributes :: Decode Attributes where decode = dec
