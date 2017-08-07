@@ -8,8 +8,8 @@
   ],
   "dependencies": {
     "purescript-prelude": "^3.1.0",
-    "purescript-foreign-generic" : "jacereda/purescript-foreign-generic#master",
-    "purescript-simple-json": "justinwoo/purescript-simple-json"
+    "purescript-foreign-generic" : "^5.0.0",
+    "purescript-simple-json": "jacereda/purescript-simple-json#master"
   },
   "devDependencies": {
     "purescript-console": "^3.0.0",
