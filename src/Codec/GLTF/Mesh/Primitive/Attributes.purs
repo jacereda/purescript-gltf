@@ -14,10 +14,11 @@ newtype Attributes = Attributes
   { position :: NullOrUndefined Int
   , normal :: NullOrUndefined Int
   , tangent :: NullOrUndefined Int
-  , texCoord0 :: NullOrUndefined Int
-  , texCoord1 :: NullOrUndefined Int
-  , joints0 :: NullOrUndefined Int
-  , weights :: NullOrUndefined Int            
+  , texCoord_0 :: NullOrUndefined Int
+  , texCoord_1 :: NullOrUndefined Int
+  , color_0 :: NullOrUndefined Int
+  , joints_0 :: NullOrUndefined Int
+  , weights_0 :: NullOrUndefined Int            
   }
 
 derive instance genericAttributes :: Generic Attributes _
