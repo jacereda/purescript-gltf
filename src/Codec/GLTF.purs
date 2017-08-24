@@ -16,7 +16,7 @@ import Codec.GLTF.Skin (Skin)
 import Codec.GLTF.Texture (Texture)
 import Data.Foreign (F)
 import Data.Foreign.NullOrUndefined (NullOrUndefined)
-import Simple.JSON (readJSON)
+import Simple.JSON (readJSON, writeJSON)
 
 type GLTF
   = 
@@ -39,3 +39,6 @@ type GLTF
 
 decodeGLTF :: String -> F GLTF
 decodeGLTF = readJSON
+
+encodeGLTF :: GLTF -> String
+encodeGLTF = writeJSON

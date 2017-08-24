@@ -7,7 +7,7 @@ import Data.Either (Either(..))
 import Data.Foreign (ForeignError(..), fail, readInt, readString)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
-import Simple.JSON (class ReadForeign)
+import Simple.JSON (class ReadForeign, class WriteForeign, write)
 
 data ComponentType
   = Byte
@@ -30,7 +30,14 @@ instance readForeignComponentType :: ReadForeign ComponentType where
       5126 -> pure Float
       _ -> fail $ ForeignError $ "Unrecognized component type:" <> show n
     Left e -> fail $ ForeignError $ "Unable to read component type:" <> show e
-
+instance writeForeignComponentType :: WriteForeign ComponentType where
+  writeImpl v = write case v of
+    Byte -> 5120
+    UnsignedByte -> 5121
+    Short -> 5122
+    UnsignedShort -> 5123
+    UnsignedInt -> 5125
+    Float -> 5126
 
 
 data CameraType
@@ -45,6 +52,10 @@ instance readForeignCameraType :: ReadForeign CameraType where
     Right "perspective" -> pure CamPerspective
     Right x -> fail $ ForeignError $ "Unrecognized camera type:" <> x
     Left e -> fail $ ForeignError $ "Unrecognized camera type:" <> show e
+instance writeForeignCameraType :: WriteForeign CameraType where
+  writeImpl v = write case v of
+    CamOrthographic -> "orthographic"
+    CamPerspective -> "perspective"
 
 
 data AccessorType
@@ -69,6 +80,16 @@ instance readForeignAccessorType :: ReadForeign AccessorType where
     Right "MAT4" -> pure Mat4
     Right x -> fail $ ForeignError $ "Unrecognized accessor type:" <> x
     Left e -> fail $ ForeignError $ "Unrecognized accessor type:" <> show e
+instance writeForeignAccessorType :: WriteForeign AccessorType where
+  writeImpl v = write case v of
+    Scalar -> "SCALAR"
+    Vec2 -> "VEC2"
+    Vec3 -> "VEC3"
+    Vec4 -> "VEC4"
+    Mat2 -> "MAT2"
+    Mat3 -> "MAT3"
+    Mat4 -> "MAT4"
+    
 
 data Interpolation
   = Linear
@@ -86,7 +107,12 @@ instance readForeignInterpolation :: ReadForeign Interpolation where
     Right "CUBICSPLINE" -> pure CubicSpline
     Right x -> fail $ ForeignError $ "Unrecognized interpolation:" <> x
     Left e -> fail $ ForeignError $ "Unrecognized interpolation:" <> show e
-
+instance writeForeignInterpolation :: WriteForeign Interpolation where
+  writeImpl v = write case v of
+    Linear -> "LINEAR"
+    Step -> "STEP"
+    CatmullRomSpline -> "CATMULLROMSPLINE"
+    CubicSpline -> "CUBICSPLINE"
 
 data TargetPath
   = Translation
@@ -104,6 +130,12 @@ instance readForeignTargetPath :: ReadForeign TargetPath where
     Right "weights" -> pure Weights
     Right x -> fail $ ForeignError $ "Unrecognized target path:" <> x
     Left e -> fail $ ForeignError $ "Unrecognized target path:" <> show e
+instance writeForeignTargetPath :: WriteForeign TargetPath where
+  writeImpl v = write case v of
+    Translation -> "translation"
+    Rotation -> "rotation"
+    Scale -> "scale"
+    Weights -> "weights"    
 
 data AlphaMode
   = Opaque
@@ -119,6 +151,11 @@ instance readForeignAlphaMode :: ReadForeign AlphaMode where
     Right "BLEND" -> pure Blend
     Right x -> fail $ ForeignError $ "Unrecognized alpha mode:" <> x
     Left e -> fail $ ForeignError $ "Unrecognized alpha mode:" <> show e
+instance writeForeignAlphaMode :: WriteForeign AlphaMode where
+  writeImpl v = write case v of
+    Opaque -> "OPAQUE"
+    Mask -> "MASK"
+    Blend -> "BLEND"
 
 data PrimitiveMode
   = Points
@@ -142,7 +179,15 @@ instance readForeignPrimitiveMode :: ReadForeign PrimitiveMode where
     Right 6 -> pure TriangleFan
     Right x -> fail $ ForeignError $ "Unrecognized primitive mode:" <> show x
     Left e -> fail $ ForeignError $ "Unrecognized primitive mode:" <> show e
-
+instance writeForeignPrimitiveMode :: WriteForeign PrimitiveMode where
+  writeImpl v = write case v of
+    Points -> 0
+    Lines -> 1
+    LineLoop -> 2
+    LineStrip -> 3
+    Triangles -> 4
+    TriangleStrip -> 5
+    TriangleFan -> 6
 
 data TargetType
   = ArrayBuffer
@@ -156,7 +201,10 @@ instance readForeignTargetType :: ReadForeign TargetType where
     Right 34963 -> pure ElementArrayBuffer
     Right x -> fail $ ForeignError $ "Unrecognized target type:" <> show x
     Left e -> fail $ ForeignError $ "Unrecognized target type:" <> show e
-
+instance writeForeignTargetType :: WriteForeign TargetType where
+  writeImpl v = write case v of
+    ArrayBuffer -> 34962
+    ElementArrayBuffer -> 34963
 
 data MimeType
   = ImageJPEG
@@ -170,6 +218,10 @@ instance readForeignMimeType :: ReadForeign MimeType where
     Right "image/png" -> pure ImagePNG
     Right x -> fail $ ForeignError $ "Unrecognized mime type:" <> show x
     Left e -> fail $ ForeignError $ "Unrecognized mime type:" <> show e
+instance writeForeignMimeType :: WriteForeign MimeType where
+  writeImpl v = write case v of
+    ImageJPEG -> "image/jpeg"
+    ImagePNG -> "image/png"
     
 
 data MagFilter
@@ -184,6 +236,10 @@ instance readForeignMagFilter :: ReadForeign MagFilter where
     Right 9729 -> pure MagLinear
     Right x -> fail $ ForeignError $ "Unrecognized mag filter:" <> show x
     Left e -> fail $ ForeignError $ "Unrecognized mag filter:" <> show e
+instance writeForeignMagFilter :: WriteForeign MagFilter where
+  writeImpl v = write case v of
+    MagNearest -> 9728
+    MagLinear -> 9729
     
 data MinFilter
   = MinNearest
@@ -205,6 +261,14 @@ instance readForeignMinFilter :: ReadForeign MinFilter where
     Right 9987 -> pure LinearMipmapLinear
     Right x -> fail $ ForeignError $ "Unrecognized min filter:" <> show x
     Left e -> fail $ ForeignError $ "Unrecognized min filter:" <> show e
+instance writeForeignMinFilter :: WriteForeign MinFilter where
+  writeImpl v = write case v of
+    MinNearest -> 9728
+    MinLinear -> 9729
+    NearestMipmapNearest -> 9984
+    LinearMipmapNearest -> 9985
+    NearestMipmapLinear -> 9986
+    LinearMipmapLinear -> 9987
     
 data WrapMode
   = ClampToEdge
@@ -220,4 +284,8 @@ instance readForeignWrapMode :: ReadForeign WrapMode where
     Right 10497 -> pure Repeat
     Right x -> fail $ ForeignError $ "Unrecognized wrap mode:" <> show x
     Left e -> fail $ ForeignError $ "Unrecognized wrap mode:" <> show e
-    
+instance writeForeignWrapMode :: WriteForeign WrapMode where
+  writeImpl v = write case v of
+    ClampToEdge -> 33071
+    MirroredRepeat -> 33648
+    Repeat -> 10497

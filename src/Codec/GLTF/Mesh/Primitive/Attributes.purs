@@ -2,13 +2,12 @@ module Codec.GLTF.Mesh.Primitive.Attributes where
 
 import Prelude
 
-import Data.Foreign.Generic (defaultOptions, genericDecode)
-import Data.Foreign.Generic.Types (SumEncoding(..))
+import Data.Foreign.Generic (defaultOptions, genericDecode, genericEncode)
 import Data.Foreign.NullOrUndefined (NullOrUndefined)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.String (toUpper)
-import Simple.JSON (class ReadForeign)
+import Simple.JSON (class ReadForeign, class WriteForeign)
 
 newtype Attributes = Attributes
   { position :: NullOrUndefined Int
@@ -27,3 +26,7 @@ instance readForeignAttributes :: ReadForeign Attributes where
   readImpl = genericDecode (defaultOptions { fieldTransform = toUpper
                                            , unwrapSingleConstructors = true
                                            })
+instance writeForeignAttributes :: WriteForeign Attributes where
+  writeImpl = genericEncode (defaultOptions { fieldTransform = toUpper
+                                            , unwrapSingleConstructors = true
+                                            })

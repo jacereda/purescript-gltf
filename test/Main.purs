@@ -2,7 +2,8 @@ module Test.Main where
 
 import Prelude
 
-import Codec.GLTF (GLTF, decodeGLTF)
+import Data.Argonaut.Parser (jsonParser)
+import Codec.GLTF (GLTF, decodeGLTF, encodeGLTF)
 import Control.Monad.Aff (Aff, attempt, launchAff)
 import Control.Monad.Aff.Console (CONSOLE, log)
 import Control.Monad.Eff (Eff)
@@ -10,7 +11,6 @@ import Control.Monad.Eff.Exception (EXCEPTION)
 import Control.Monad.Except (runExcept)
 import Data.Either (Either(..))
 import Data.Foreign (F)
-import Data.Foreign.Class (decode)
 import Network.HTTP.Affjax (AJAX, get)
 
 main :: forall e. Eff (exception :: EXCEPTION, ajax :: AJAX, console :: CONSOLE | e) Unit
@@ -61,7 +61,13 @@ main = void $ launchAff do
             Left err -> report url err
             Right res -> case runExcept $ (decodeGLTF res.response :: F GLTF) of
               Left err -> report url err
-              Right r -> log $ "OK: " <> url
+              Right r -> do
+                let enc = encodeGLTF r
+                    pars0 = jsonParser res.response
+                    pars1 = jsonParser enc
+                if (pars0 /= pars1)
+                  then log $ "FAIL:\npars0: " <> show pars0 <> "\npars1: " <> show pars1
+                  else log $ "OK: " <> url
         report :: forall eff a. Show a => String -> a -> Aff (console :: CONSOLE | eff) Unit
         report m e = log $ "Error : " <> m <> " " <> show e
         base = "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/"
