@@ -3,14 +3,13 @@ module Test.Main where
 import Prelude
 
 import Data.Argonaut.Parser (jsonParser)
-import Codec.GLTF (GLTF, decodeGLTF, encodeGLTF)
+import Codec.GLTF (decodeGLTF, encodeGLTF)
 import Control.Monad.Aff (Aff, attempt, launchAff)
 import Control.Monad.Aff.Console (CONSOLE, log)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Exception (EXCEPTION)
 import Control.Monad.Except (runExcept)
 import Data.Either (Either(..))
-import Data.Foreign (F)
 import Network.HTTP.Affjax (AJAX, get)
 
 main :: forall e. Eff (exception :: EXCEPTION, ajax :: AJAX, console :: CONSOLE | e) Unit
@@ -59,7 +58,7 @@ main = void $ launchAff do
           response <- attempt $ get $ base <> url
           case response of
             Left err -> report url err
-            Right res -> case runExcept $ (decodeGLTF res.response :: F GLTF) of
+            Right res -> case runExcept $ decodeGLTF res.response of
               Left err -> report url err
               Right r -> do
                 let enc = encodeGLTF r
