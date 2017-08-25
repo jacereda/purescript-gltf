@@ -2,11 +2,11 @@ module Codec.GLTF.Asset where
 
 import Prelude
 
-import Codec.GLTF.Dec (dec)
+import Codec.GLTF.Dec (dec, enc)
+import Data.Foreign.Class (class Decode, class Encode)
+import Data.Foreign.NullOrUndefined (NullOrUndefined)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
-import Data.Foreign.Class (class Decode)
-import Data.Foreign.NullOrUndefined (NullOrUndefined)
 
 newtype Asset =
   Asset
@@ -19,3 +19,4 @@ newtype Asset =
 derive instance genericAsset :: Generic Asset _
 instance showAsset :: Show Asset where show = genericShow
 instance decodeAsset :: Decode Asset where decode = dec
+instance encodeAsset :: Encode Asset where encode = enc

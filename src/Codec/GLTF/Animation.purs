@@ -2,13 +2,13 @@ module Codec.GLTF.Animation where
 
 import Prelude
 
-import Codec.GLTF.Dec (dec)
 import Codec.GLTF.Animation.Channel (Channel)
 import Codec.GLTF.Animation.Sampler (Sampler)
+import Codec.GLTF.Dec (dec, enc)
+import Data.Foreign.Class (class Decode, class Encode)
+import Data.Foreign.NullOrUndefined (NullOrUndefined)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
-import Data.Foreign.Class (class Decode)
-import Data.Foreign.NullOrUndefined (NullOrUndefined)
 
 newtype Animation =
   Animation
@@ -20,3 +20,4 @@ newtype Animation =
 derive instance genericAnimation :: Generic Animation _
 instance showAnimation :: Show Animation where show = genericShow
 instance decodeAnimation :: Decode Animation where decode = dec
+instance encodeAnimation :: Encode Animation where encode = enc

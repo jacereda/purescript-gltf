@@ -8,7 +8,8 @@
   ],
   "dependencies": {
     "purescript-prelude": "^3.1.0",
-    "purescript-foreign-generic": "jacereda/purescript-foreign-generic#map"
+    "purescript-foreign-generic" : "^5.0.0",
+    "purescript-simple-json": "jacereda/purescript-simple-json#write-strmap"
   },
   "devDependencies": {
     "purescript-console": "^3.0.0",

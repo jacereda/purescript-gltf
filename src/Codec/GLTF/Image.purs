@@ -2,12 +2,12 @@ module Codec.GLTF.Image where
 
 import Prelude
 
-import Codec.GLTF.Dec (dec)
+import Codec.GLTF.Dec (dec, enc)
 import Codec.GLTF.Types (MimeType)
+import Data.Foreign.Class (class Decode, class Encode)
+import Data.Foreign.NullOrUndefined (NullOrUndefined)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
-import Data.Foreign.Class (class Decode)
-import Data.Foreign.NullOrUndefined (NullOrUndefined)
 
 newtype Image
   = Image
@@ -20,3 +20,4 @@ newtype Image
 derive instance genericImage :: Generic Image _
 instance showImage :: Show Image where show = genericShow
 instance decodeImage :: Decode Image where decode = dec
+instance encodeImage :: Encode Image where encode = enc

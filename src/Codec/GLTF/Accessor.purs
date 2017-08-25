@@ -2,10 +2,10 @@ module Codec.GLTF.Accessor where
 
 import Prelude
 
-import Codec.GLTF.Dec (dec)
-import Codec.GLTF.Types (ComponentType, AccessorType)
 import Codec.GLTF.Accessor.Sparse (Sparse)
-import Data.Foreign.Class (class Decode)
+import Codec.GLTF.Dec (dec, enc)
+import Codec.GLTF.Types (ComponentType, AccessorType)
+import Data.Foreign.Class (class Decode, class Encode)
 import Data.Foreign.NullOrUndefined (NullOrUndefined)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
@@ -27,3 +27,4 @@ newtype Accessor
 derive instance genericAccessor :: Generic Accessor _
 instance showAccessor :: Show Accessor where show = genericShow
 instance decodeAccessor :: Decode Accessor where decode = dec
+instance encodeAccessor :: Encode Accessor where encode = enc

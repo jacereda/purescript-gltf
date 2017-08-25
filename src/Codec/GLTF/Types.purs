@@ -2,16 +2,12 @@ module Codec.GLTF.Types where
 
 import Prelude
 
-import Codec.GLTF.Dec (dec)
 import Control.Monad.Except (runExcept)
 import Data.Either (Either(..))
 import Data.Foreign (ForeignError(..), fail, readInt, readString)
-import Data.Foreign.Class (class Decode)
+import Data.Foreign.Class (class Decode, class Encode, encode)
 import Data.Generic.Rep (class Generic)
-import Data.Generic.Rep.Eq (genericEq)
-import Data.Generic.Rep.Ord (genericCompare)
 import Data.Generic.Rep.Show (genericShow)
-import Data.Map (Map)
 
 data ComponentType
   = Byte
@@ -34,7 +30,14 @@ instance decodeComponentType :: Decode ComponentType where
       5126 -> pure Float
       _ -> fail $ ForeignError $ "Unrecognized component type:" <> show n
     Left e -> fail $ ForeignError $ "Unable to read component type:" <> show e
-
+instance encodeComponentType :: Encode ComponentType where
+  encode v = encode case v of
+    Byte -> 5120
+    UnsignedByte -> 5121
+    Short -> 5122
+    UnsignedShort -> 5123
+    UnsignedInt -> 5125
+    Float -> 5126
 
 
 data CameraType
@@ -49,6 +52,10 @@ instance decodeCameraType :: Decode CameraType where
     Right "perspective" -> pure CamPerspective
     Right x -> fail $ ForeignError $ "Unrecognized camera type:" <> x
     Left e -> fail $ ForeignError $ "Unrecognized camera type:" <> show e
+instance encodeCameraType :: Encode CameraType where
+  encode v = encode case v of
+    CamOrthographic -> "orthographic"
+    CamPerspective -> "perspective"
 
 
 data AccessorType
@@ -73,6 +80,16 @@ instance decodeAccessorType :: Decode AccessorType where
     Right "MAT4" -> pure Mat4
     Right x -> fail $ ForeignError $ "Unrecognized accessor type:" <> x
     Left e -> fail $ ForeignError $ "Unrecognized accessor type:" <> show e
+instance encodeAccessorType :: Encode AccessorType where
+  encode v = encode case v of
+    Scalar -> "SCALAR"
+    Vec2 -> "VEC2"
+    Vec3 -> "VEC3"
+    Vec4 -> "VEC4"
+    Mat2 -> "MAT2"
+    Mat3 -> "MAT3"
+    Mat4 -> "MAT4"
+    
 
 data Interpolation
   = Linear
@@ -90,7 +107,12 @@ instance decodeInterpolation :: Decode Interpolation where
     Right "CUBICSPLINE" -> pure CubicSpline
     Right x -> fail $ ForeignError $ "Unrecognized interpolation:" <> x
     Left e -> fail $ ForeignError $ "Unrecognized interpolation:" <> show e
-
+instance encodeInterpolation :: Encode Interpolation where
+  encode v = encode case v of
+    Linear -> "LINEAR"
+    Step -> "STEP"
+    CatmullRomSpline -> "CATMULLROMSPLINE"
+    CubicSpline -> "CUBICSPLINE"
 
 data TargetPath
   = Translation
@@ -108,6 +130,12 @@ instance decodeTargetPath :: Decode TargetPath where
     Right "weights" -> pure Weights
     Right x -> fail $ ForeignError $ "Unrecognized target path:" <> x
     Left e -> fail $ ForeignError $ "Unrecognized target path:" <> show e
+instance encodeTargetPath :: Encode TargetPath where
+  encode v = encode case v of
+    Translation -> "translation"
+    Rotation -> "rotation"
+    Scale -> "scale"
+    Weights -> "weights"    
 
 data AlphaMode
   = Opaque
@@ -123,6 +151,11 @@ instance decodeAlphaMode :: Decode AlphaMode where
     Right "BLEND" -> pure Blend
     Right x -> fail $ ForeignError $ "Unrecognized alpha mode:" <> x
     Left e -> fail $ ForeignError $ "Unrecognized alpha mode:" <> show e
+instance encodeAlphaMode :: Encode AlphaMode where
+  encode v = encode case v of
+    Opaque -> "OPAQUE"
+    Mask -> "MASK"
+    Blend -> "BLEND"
 
 data PrimitiveMode
   = Points
@@ -146,7 +179,15 @@ instance decodePrimitiveMode :: Decode PrimitiveMode where
     Right 6 -> pure TriangleFan
     Right x -> fail $ ForeignError $ "Unrecognized primitive mode:" <> show x
     Left e -> fail $ ForeignError $ "Unrecognized primitive mode:" <> show e
-
+instance encodePrimitiveMode :: Encode PrimitiveMode where
+  encode v = encode case v of
+    Points -> 0
+    Lines -> 1
+    LineLoop -> 2
+    LineStrip -> 3
+    Triangles -> 4
+    TriangleStrip -> 5
+    TriangleFan -> 6
 
 data TargetType
   = ArrayBuffer
@@ -160,7 +201,10 @@ instance decodeTargetType :: Decode TargetType where
     Right 34963 -> pure ElementArrayBuffer
     Right x -> fail $ ForeignError $ "Unrecognized target type:" <> show x
     Left e -> fail $ ForeignError $ "Unrecognized target type:" <> show e
-
+instance encodeTargetType :: Encode TargetType where
+  encode v = encode case v of
+    ArrayBuffer -> 34962
+    ElementArrayBuffer -> 34963
 
 data MimeType
   = ImageJPEG
@@ -174,6 +218,10 @@ instance decodeMimeType :: Decode MimeType where
     Right "image/png" -> pure ImagePNG
     Right x -> fail $ ForeignError $ "Unrecognized mime type:" <> show x
     Left e -> fail $ ForeignError $ "Unrecognized mime type:" <> show e
+instance encodeMimeType :: Encode MimeType where
+  encode v = encode case v of
+    ImageJPEG -> "image/jpeg"
+    ImagePNG -> "image/png"
     
 
 data MagFilter
@@ -188,6 +236,10 @@ instance decodeMagFilter :: Decode MagFilter where
     Right 9729 -> pure MagLinear
     Right x -> fail $ ForeignError $ "Unrecognized mag filter:" <> show x
     Left e -> fail $ ForeignError $ "Unrecognized mag filter:" <> show e
+instance encodeMagFilter :: Encode MagFilter where
+  encode v = encode case v of
+    MagNearest -> 9728
+    MagLinear -> 9729
     
 data MinFilter
   = MinNearest
@@ -209,6 +261,14 @@ instance decodeMinFilter :: Decode MinFilter where
     Right 9987 -> pure LinearMipmapLinear
     Right x -> fail $ ForeignError $ "Unrecognized min filter:" <> show x
     Left e -> fail $ ForeignError $ "Unrecognized min filter:" <> show e
+instance encodeMinFilter :: Encode MinFilter where
+  encode v = encode case v of
+    MinNearest -> 9728
+    MinLinear -> 9729
+    NearestMipmapNearest -> 9984
+    LinearMipmapNearest -> 9985
+    NearestMipmapLinear -> 9986
+    LinearMipmapLinear -> 9987
     
 data WrapMode
   = ClampToEdge
@@ -224,5 +284,8 @@ instance decodeWrapMode :: Decode WrapMode where
     Right 10497 -> pure Repeat
     Right x -> fail $ ForeignError $ "Unrecognized wrap mode:" <> show x
     Left e -> fail $ ForeignError $ "Unrecognized wrap mode:" <> show e
-    
-
+instance encodeWrapMode :: Encode WrapMode where
+  encode v = encode case v of
+    ClampToEdge -> 33071
+    MirroredRepeat -> 33648
+    Repeat -> 10497

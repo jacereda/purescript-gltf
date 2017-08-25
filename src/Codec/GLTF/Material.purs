@@ -2,13 +2,13 @@ module Codec.GLTF.Material where
 
 import Prelude
 
-import Codec.GLTF.Dec (dec)
-import Codec.GLTF.Types (AlphaMode)
+import Codec.GLTF.Dec (dec, enc)
 import Codec.GLTF.Material.NormalTextureInfo (NormalTextureInfo)
 import Codec.GLTF.Material.OcclusionTextureInfo (OcclusionTextureInfo)
 import Codec.GLTF.Material.PBRMetallicRoughness (PBRMetallicRoughness)
 import Codec.GLTF.TextureInfo (TextureInfo)
-import Data.Foreign.Class (class Decode)
+import Codec.GLTF.Types (AlphaMode)
+import Data.Foreign.Class (class Decode, class Encode)
 import Data.Foreign.NullOrUndefined (NullOrUndefined)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
@@ -29,3 +29,4 @@ newtype Material
 derive instance genericMaterial :: Generic Material _
 instance showMaterial :: Show Material where show = genericShow
 instance decodeMaterial :: Decode Material where decode = dec
+instance encodeMaterial :: Encode Material where encode = enc
