@@ -6,7 +6,7 @@ import Codec.GLTF.Dec (dec)
 import Control.Monad.Except (runExcept)
 import Data.Either (Either(..))
 import Data.Foreign (ForeignError(..), fail, readInt, readString)
-import Data.Foreign.Class (class Decode, class DecodeKey)
+import Data.Foreign.Class (class Decode)
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Eq (genericEq)
 import Data.Generic.Rep.Ord (genericCompare)
@@ -226,35 +226,3 @@ instance decodeWrapMode :: Decode WrapMode where
     Left e -> fail $ ForeignError $ "Unrecognized wrap mode:" <> show e
     
 
-data Property
-  = Position
-  | Normal
-  | Tangent
-  | TexCoord0
-  | TexCoord1
-  | Color0
-  | Joints0
-  | Weights0
-
-derive instance genericProperty :: Generic Property _
-instance showProperty :: Show Property where show = genericShow
-instance ordProperty :: Ord Property where compare = genericCompare
-instance eqProperty :: Eq Property where eq = genericEq
-instance decodeKeyProperty :: DecodeKey Property where
-  decodeKey v = case v of
-    "POSITION" -> pure Position
-    "NORMAL" -> pure Normal
-    "TANGENT" -> pure Tangent
-    "TEXCOORD_0" -> pure TexCoord0
-    "TEXCOORD_1" -> pure TexCoord1
-    "COLOR_0" -> pure Color0
-    "JOINTS_0" -> pure Joints0
-    "WEIGHTS_0" -> pure Weights0
-    x -> fail $ ForeignError $ "Unrecognized property:" <> x
-
-
-newtype Attributes = Attributes (Map Property Int)
-
-derive instance genericAttributes :: Generic Attributes _
-instance showAttributes :: Show Attributes where show = genericShow
-instance decodeAttributes :: Decode Attributes where decode = dec

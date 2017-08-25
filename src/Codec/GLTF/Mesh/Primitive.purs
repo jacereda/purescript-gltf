@@ -3,7 +3,8 @@ module Codec.GLTF.Mesh.Primitive where
 import Prelude
 
 import Codec.GLTF.Dec (dec)
-import Codec.GLTF.Types (PrimitiveMode, Attributes)
+import Codec.GLTF.Types (PrimitiveMode)
+import Codec.GLTF.Mesh.Primitive.Attributes (Attributes)
 import Data.Foreign.Class (class Decode)
 import Data.Foreign.NullOrUndefined (NullOrUndefined)
 import Data.Generic.Rep (class Generic)
